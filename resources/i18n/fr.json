@@ -4,10 +4,8 @@
   "jury": "Jury",
   "author": "Auteur",
   "author_plural": "Auteurs",
-  "academic_year": "Année universitaire",
-
+  "academic_year": "Année académique",
   "figures_table": "Table des figures",
   "tables_table": "Table des tableaux",
-
-  "chapter": "Chapitre"  
+  "chapter": "Chapitre"
 }

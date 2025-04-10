@@ -4,13 +4,9 @@ description = "A Typst template to quickly scaffold a report for your projects a
 version = "1.0.0"
 entrypoint = "lib.typ"
 license = "MIT"
-authors = [
-  "Mehdi Essalehi <@essmehdi>",
-  "Amine Hadnane <@amin-hdn>",
-  "Mário Ferreira <@heig-vd.ch",
-]
+authors = ["Mário Ferreira <@heig-vd.ch"]
 categories = ["report"]
-keywords = ["ensias", "report", "internship", "academic", "project"]
+keywords = ["heig-d", "report", "internship", "academic", "project"]
 exclude = ["example.pdf"]
 repository = "https://github.com/essmehdi/ensias-report-template"
 

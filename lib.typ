@@ -1,30 +1,51 @@
 #let IMAGE_BOX_MAX_WIDTH = 120pt
 #let IMAGE_BOX_MAX_HEIGHT = 50pt
 
-#let project(title: "", subtitle: none, school-logo: none, company-logo: none, authors: (), mentors: (), jury: (), branch: none, academic-year: none, french: false, show-table-of-contents:true, show-table-of-figures: false, show-table-of-tables: false, footer-text: "ENSIAS", body) = {
-  // Set the document's basic properties.
-  set document(author: authors, title: title)
+#let project(
+  title: "",
+  subtitle: none,
+  school-logo: none,
+  company-logo: none,
+  author: (),
+  mentors: (),
+  jury: (),
+  french: false,
+  show-table-of-contents: true,
+  show-table-of-figures: false,
+  show-table-of-tables: false,
+  department: "",
+  sector: "",
+  specialization: "",
+  body
+) = {
+  // 1) Document setup
+  set document(
+    author: author,
+    title: title
+  )
+
   set page(
-    numbering: "1",
+    numbering: none,
     number-align: center
   )
 
-  let dict = json("resources/i18n/en.json")
-  let lang = "en"
-  if french {
-    dict = json("resources/i18n/fr.json")
-    lang = "fr"
+  // 2) Language and dictionary
+  let (dict, lang) = if french {
+    (json("resources/i18n/fr.json"), "fr")
+  } else {
+    (json("resources/i18n/en.json"), "en")
   }
 
-  set text(font: "Linux Libertine", lang: lang, size: 13pt)
+  set text(font: "New Computer Modern", lang: lang, size: 13pt)
   set heading(numbering: "1.1")
-  
+  set par(justify: true)
+
+  // 3) Custom heading display
   show heading: it => {
-    if it.level == 1 and it.numbering != none {
-      pagebreak()
-      v(30pt)
-      text(size: 30pt)[#it.body ]
-      v(30pt)
+    if it.level == 1 {
+      v(20pt)
+      text(size: 30pt)[#it.body]
+      v(20pt)
     } else {
       v(5pt)
       [#it]
@@ -32,129 +53,127 @@
     }
   }
 
-  block[
-    #box(height: IMAGE_BOX_MAX_HEIGHT, width: IMAGE_BOX_MAX_WIDTH)[
-      #align(left + horizon)[
-        #company-logo
-      ]
-    ]
-    #h(1fr)
-    #box(height: IMAGE_BOX_MAX_HEIGHT, width: IMAGE_BOX_MAX_WIDTH)[
-      #align(right + horizon)[
-        #if school-logo == none {
-          image("images/ENSIAS.svg")
-        } else {
-          school-logo
-        }
-      ]
-    ]
-  ]
-  
-  // Title box  
-  align(center + horizon)[
-    #if subtitle != none {
-      text(size: 14pt, tracking: 2pt)[
-        #smallcaps[
-          #subtitle
-        ]
-      ]
-    }
-    #line(length: 100%, stroke: 0.5pt)
-    #text(size: 20pt, weight: "bold")[#title]
-    #line(length: 100%, stroke: 0.5pt)
+  // --- Title-page content ---
+  // Top-left logo
+  box(width: auto)[
+    // Replace with your own image path:
+    #image("./images/logo.svg", width: 3cm)
   ]
 
-  // Credits
-  box()
-  h(1fr)
-  grid(
-    columns: (auto, 1fr, auto),
-    [
-      // Authors
-      #if authors.len() > 0 {
-        [
-          #text(weight: "bold")[
-            #if authors.len() > 1 {
-              dict.author_plural
-            } else {
-              dict.author
-            }
-            #linebreak()
-          ]
-          #for author in authors {
-            [#author #linebreak()]
-          }
-        ]
-      }
-    ],
-    [
-      // Mentor
+  // Vertical gap before center block
+  v(4cm)
+
+  // Main title & subtitle, centered
+  set align(center)
+  box(width: 100%)[
+    #text(size: 22pt, weight: "bold")[
+      #title
+    ]
+
+    #text(size: 14pt, weight: "bold")[
+      #subtitle
+    ]
+  ]
+
+  v(4cm)
+
+  // Department info
+  box(width: 100%)[
+    Département #department
+
+    #sector
+
+    Orientation #specialization
+  ]
+
+  v(2cm)
+
+  let date = datetime.today
+
+  // Author name & date
+  set align(center)
+  box(width: auto)[
+    #author
+
+    #datetime.today().display("[day] [month repr:long] [year]")
+  ]
+
+  v(4cm)
+
+  // Supervisor
+  set align(center)
+  box(width: 100%)[
+      // Mentors column
       #if mentors != none and mentors.len() > 0 {
-        align(right)[
-          #text(weight: "bold")[
-            #if mentors.len() > 1 {
-              dict.mentor_plural
-            } else {
-              dict.mentor
-            }
-            #linebreak()
-          ]
+        align(center)[
+          Supervisé par :
+
           #for mentor in mentors {
-            mentor
-            linebreak()
+            [#mentor #linebreak()]
           }
         ]
       }
-      // Jury
+
+      // Jury column
       #if jury != none and jury.len() > 0 {
         align(right)[
-          *#dict.jury* #linebreak()
+          *#dict.jury*
+          #linebreak()
           #for prof in jury {
             [#prof #linebreak()]
           }
         ]
       }
-    ]
-  )
 
-  align(center + bottom)[
-    #if branch != none {
-      branch
-      linebreak()
-    }
-    #if academic-year != none {
-      [#dict.academic_year: #academic-year]
-    }
   ]
-  
-  if show-table-of-contents {
-    pagebreak()
 
-    // Table of contents.
+  set page(numbering: "i")
+  set align(left)
+
+  let new_page = false
+
+  if show-table-of-contents {
+    v(4cm)
+    // Bold only level-1 headings in the TOC
+    show outline.entry.where(level: 1): set text(weight: "bold")
+    set outline.entry(fill: repeat([.], gap: 0.4em))
+
+    // Table of contents
     outline(depth: 3, indent: auto)
 
     pagebreak()
+    new_page = true
   }
 
   if show-table-of-figures {
-    // Table of figures.
+    // Table of figures
     outline(
       title: dict.figures_table,
       target: figure.where(kind: image)
     )
     pagebreak()
+    new_page = true
   }
 
-
   if show-table-of-tables {
+    // Table of tables
     outline(
       title: dict.tables_table,
       target: figure.where(kind: table)
     )
     pagebreak()
+    new_page = true
   }
 
-  
-  // Main body.
+  if new_page {
+    set page(numbering: none)
+    pagebreak()
+  }
+
+  set page(numbering: "1")
+
+  counter(page).update(1)
+
   body
 }
+
