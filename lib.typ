@@ -1,3 +1,5 @@
+#import "@preview/icu-datetime:0.1.2": fmt-datetime, fmt-date
+
 #let IMAGE_BOX_MAX_WIDTH = 120pt
 #let IMAGE_BOX_MAX_HEIGHT = 50pt
 
@@ -6,10 +8,12 @@
   subtitle: none,
   school-logo: none,
   company-logo: none,
-  author: (),
+  first_name: "",
+  last_name: "",
   mentors: (),
   jury: (),
   french: false,
+  locale: "",
   show-table-of-contents: true,
   show-table-of-figures: false,
   show-table-of-tables: false,
@@ -18,16 +22,20 @@
   specialization: "",
   body
 ) = {
+  let author = first_name + " " + last_name
   // 1) Document setup
   set document(
     author: author,
     title: title
   )
+  let author_display = first_name + " " + strong[#last_name]
 
   set page(
     numbering: none,
     number-align: center
   )
+
+  set text(lang: "fr")
 
   // 2) Language and dictionary
   let (dict, lang) = if french {
@@ -36,7 +44,7 @@
     (json("resources/i18n/en.json"), "en")
   }
 
-  set text(font: "New Computer Modern", lang: lang, size: 13pt)
+  set text(font: "New Computer Modern", lang: lang, size: 12pt)
   set heading(numbering: "1.1")
   set par(justify: true)
 
@@ -93,9 +101,12 @@
   // Author name & date
   set align(center)
   box(width: auto)[
-    #author
+    #author_display
 
-    #datetime.today().display("[day] [month repr:long] [year]")
+    #fmt-date(
+      datetime.today(), locale: locale,
+      length: "long"
+    )
   ]
 
   v(4cm)
@@ -139,7 +150,7 @@
     set outline.entry(fill: repeat([.], gap: 0.4em))
 
     // Table of contents
-    outline(depth: 3, indent: auto)
+    outline(depth: 3, indent: auto, title: "Table des matières")
 
     pagebreak()
     new_page = true
@@ -148,7 +159,7 @@
   if show-table-of-figures {
     // Table of figures
     outline(
-      title: dict.figures_table,
+      title: "Table des figures",
       target: figure.where(kind: image)
     )
     pagebreak()
@@ -158,7 +169,7 @@
   if show-table-of-tables {
     // Table of tables
     outline(
-      title: dict.tables_table,
+      title: auto,
       target: figure.where(kind: table)
     )
     pagebreak()
