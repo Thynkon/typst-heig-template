@@ -12,7 +12,6 @@
   last_name: "",
   mentors: (),
   jury: (),
-  french: false,
   locale: "",
   show-table-of-contents: true,
   show-table-of-figures: false,
@@ -20,19 +19,19 @@
   department: "",
   sector: "",
   specialization: "",
-  body
+  body,
 ) = {
   let author = first_name + " " + last_name
   // 1) Document setup
   set document(
     author: author,
-    title: title
+    title: title,
   )
   let author_display = first_name + " " + strong[#last_name]
 
   set page(
     numbering: none,
-    number-align: center
+    number-align: center,
   )
 
   set text(lang: "fr")
@@ -104,8 +103,9 @@
     #author_display
 
     #fmt-date(
-      datetime.today(), locale: locale,
-      length: "long"
+      datetime.today(),
+      locale: locale,
+      length: "long",
     )
   ]
 
@@ -114,27 +114,27 @@
   // Supervisor
   set align(center)
   box(width: 100%)[
-      // Mentors column
-      #if mentors != none and mentors.len() > 0 {
-        align(center)[
-          Supervisé par :
+    // Mentors column
+    #if mentors != none and mentors.len() > 0 {
+      align(center)[
+        Supervisé par :
 
-          #for mentor in mentors {
-            [#mentor #linebreak()]
-          }
-        ]
-      }
+        #for mentor in mentors {
+          [#mentor #linebreak()]
+        }
+      ]
+    }
 
-      // Jury column
-      #if jury != none and jury.len() > 0 {
-        align(right)[
-          *#dict.jury*
-          #linebreak()
-          #for prof in jury {
-            [#prof #linebreak()]
-          }
-        ]
-      }
+    // Jury column
+    #if jury != none and jury.len() > 0 {
+      align(right)[
+        *#dict.jury*
+        #linebreak()
+        #for prof in jury {
+          [#prof #linebreak()]
+        }
+      ]
+    }
 
   ]
 
@@ -160,7 +160,7 @@
     // Table of figures
     outline(
       title: "Table des figures",
-      target: figure.where(kind: image)
+      target: figure.where(kind: image),
     )
     pagebreak()
     new_page = true
@@ -170,7 +170,7 @@
     // Table of tables
     outline(
       title: auto,
-      target: figure.where(kind: table)
+      target: figure.where(kind: table),
     )
     pagebreak()
     new_page = true
