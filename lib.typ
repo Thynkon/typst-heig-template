@@ -36,14 +36,7 @@
 
   set text(lang: "fr")
 
-  // 2) Language and dictionary
-  let (dict, lang) = if french {
-    (json("resources/i18n/fr.json"), "fr")
-  } else {
-    (json("resources/i18n/en.json"), "en")
-  }
-
-  set text(font: "New Computer Modern", lang: lang, size: 12pt)
+  set text(font: "New Computer Modern", lang: locale, size: 12pt)
   set heading(numbering: "1.1")
   set par(justify: true)
 
@@ -150,7 +143,7 @@
     set outline.entry(fill: repeat([.], gap: 0.4em))
 
     // Table of contents
-    outline(depth: 3, indent: auto, title: "Table des matières")
+    outline(depth: 3, indent: auto)
 
     pagebreak()
     new_page = true
